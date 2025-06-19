@@ -16,12 +16,6 @@ Your project is live at:
 
 **[https://vercel.com/2355730-witsaczas-projects/v0-u-and-i-learn-academy](https://vercel.com/2355730-witsaczas-projects/v0-u-and-i-learn-academy)**
 
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.dev/chat/projects/MHihiLpaarz](https://v0.dev/chat/projects/MHihiLpaarz)**
-
 ## How It Works
 
 1. Create and modify your project using [v0.dev](https://v0.dev)
