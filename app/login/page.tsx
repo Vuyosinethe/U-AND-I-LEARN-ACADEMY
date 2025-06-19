@@ -1,22 +1,32 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { login } from "@/lib/azure-auth-provider"
+import { login, handleRedirect } from "@/lib/azure-auth-provider"
 
 export default function LoginPage() {
   const router = useRouter()
   const [pending, setPending] = useState(false)
 
+  // Handle the redirect response (runs once on mount)
+  useEffect(() => {
+    handleRedirect().then((res) => {
+      if (res) router.replace("/")
+    })
+  }, [router])
+
   const handleLogin = useCallback(async () => {
+    setPending(true)
     try {
-      setPending(true)
-      await login() // waits for initialise() inside
-      router.replace("/") // or wherever you want
-    } catch (err) {
-      console.error("Login error:", err)
-      alert("Login failed – check the console for details.")
+      const result = await login()
+      if (result) router.replace("/")
+      // when loginRedirect starts, code below won’t run (page reloads)
+    } catch (err: any) {
+      if (err.errorCode !== "user_cancelled") {
+        console.error("Unexpected login error:", err)
+        alert("Login failed – see console for details.")
+      }
     } finally {
       setPending(false)
     }

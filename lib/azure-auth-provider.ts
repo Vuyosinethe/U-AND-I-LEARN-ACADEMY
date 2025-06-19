@@ -38,9 +38,28 @@ export async function getMsal(): Promise<PublicClientApplication> {
 /**
  * Helpful wrappers
  */
-export async function login(request: PopupRequest = { scopes: ["user.read"] }): Promise<AuthenticationResult> {
+
+function isPopupError(code: string) {
+  return code === "user_cancelled" || code === "popup_window_error" || code === "popup_window_open_error"
+}
+
+export async function login(request: PopupRequest = { scopes: ["user.read"] }): Promise<AuthenticationResult | null> {
   const pca = await getMsal()
-  return pca.loginPopup(request)
+
+  // already signed-in?
+  const [cached] = pca.getAllAccounts()
+  if (cached) return { ...cached } as unknown as AuthenticationResult
+
+  try {
+    return await pca.loginPopup(request)
+  } catch (e: any) {
+    if (isPopupError(e.errorCode)) {
+      // Fallback to full-page redirect
+      await pca.loginRedirect(request)
+      return null // flow continues after redirect
+    }
+    throw e
+  }
 }
 
 export async function logout(): Promise<void> {
@@ -51,4 +70,9 @@ export async function logout(): Promise<void> {
 export async function acquireToken(request: PopupRequest = { scopes: ["user.read"] }): Promise<AuthenticationResult> {
   const pca = await getMsal()
   return pca.acquireTokenSilent(request).catch(() => pca.acquireTokenPopup(request))
+}
+
+export async function handleRedirect(): Promise<AuthenticationResult | null> {
+  const pca = await getMsal()
+  return pca.handleRedirectPromise()
 }
