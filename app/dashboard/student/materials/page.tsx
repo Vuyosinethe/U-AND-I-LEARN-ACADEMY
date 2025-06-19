@@ -636,4 +636,3 @@ export default function StudyMaterials() {
     </DashboardLayout>
   )
 }
-

@@ -86,4 +86,3 @@ export async function updateUserProfile(user: Partial<User> & { id: string }) {
     return { success: false, error }
   }
 }
-

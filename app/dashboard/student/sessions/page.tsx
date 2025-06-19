@@ -329,4 +329,3 @@ export default function StudentSessions() {
     </DashboardLayout>
   )
 }
-
