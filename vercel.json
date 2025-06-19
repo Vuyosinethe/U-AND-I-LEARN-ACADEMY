@@ -1,5 +1,0 @@
-{
-  // Disable the strict check that aborts the build when the lock-file is stale.
-  // Vercel will still cache node_modules between builds.
-  "installCommand": "pnpm install --no-frozen-lockfile"
-}
