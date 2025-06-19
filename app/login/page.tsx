@@ -23,10 +23,17 @@ export default function LoginPage() {
       if (result) router.replace("/")
       // when loginRedirect starts, code below won’t run (page reloads)
     } catch (err: any) {
-      if (err.errorCode !== "user_cancelled") {
-        console.error("Unexpected login error:", err)
-        alert("Login failed – see console for details.")
+      const code = err?.errorCode || err?.code
+      if (code === "user_cancelled") {
+        // User closed the popup — silently ignore.
+        return
       }
+      if (code === "popup_window_error" || code === "popup_window_open_error") {
+        alert("The sign-in popup was blocked. Please allow pop-ups for this site and try again.")
+        return
+      }
+      console.error("Unexpected login error:", err)
+      alert("Login failed – see console for details.")
     } finally {
       setPending(false)
     }

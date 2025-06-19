@@ -53,10 +53,10 @@ export async function login(request: PopupRequest = { scopes: ["user.read"] }): 
   try {
     return await pca.loginPopup(request)
   } catch (e: any) {
+    // Surface popup-related errors to the caller so they can be
+    // handled in the UI. Redirect isn’t viable in an iframe.
     if (isPopupError(e.errorCode)) {
-      // Fallback to full-page redirect
-      await pca.loginRedirect(request)
-      return null // flow continues after redirect
+      throw e
     }
     throw e
   }
